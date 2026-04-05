@@ -3,6 +3,8 @@ local sides = require("sides")
 local reactors = {}
 local adapters = {}
 
+local debug = true
+
 local function set_reactors_active(reactors, running) 
     for _, reactor in pairs(reactors) do
      reactor.setActive(running)
@@ -10,9 +12,15 @@ local function set_reactors_active(reactors, running)
 end
 
 for address, name in componet.list("reactor") do
+    if debug then
+        print(name)
+    end
     table.insert(reactors, componet.proxy(address))
 end
 for address, name in componet.list("transposer") do
+    if debug then
+        print(name)
+    end
     table.insert(adapters, componet.proxy(address))
 end
 
@@ -25,8 +33,8 @@ while true do
                 --print(item.name)
                 --print(item.damage)
                 --if the coolent cell is less then 20 percent cooling left
-                if item.name == "gregtech:gt.360k_Helium_Coolantcell" and item.damage > 80 then
-                    --print("swapping " .. slot)
+                if item.name == "gregtech:gt.360k_Helium_Coolantcell" and item.damage > 40 then
+                    print("swapping " .. slot)
                     set_reactors_active(reactors, false) --stop all reactors
                     --get the coolent cell
                     for destSlots=1, adapter.getInventorySize(1) do
@@ -44,14 +52,11 @@ while true do
                             break
                         end
                     end
-                    --restart reactor
-                    for _, reactor in pairs(reactors) do
-                        reactor.setActive(reactor.getHeat() < 2000)
-                    end
                 end
-            else
-                --print("slot " .. slot .. " is empty")
             end
         end
+    end
+    for _, reactor in pairs(reactors) do
+     reactor.setActive(reactor.getHeat() < 1000)
     end
 end
