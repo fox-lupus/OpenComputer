@@ -24,9 +24,11 @@ while true do
             if item then 
                 --print(item.name)
                 --print(item.damage)
+                --if the coolent cell is less then 20 percent cooling left
                 if item.name == "gregtech:gt.360k_Helium_Coolantcell" and item.damage > 80 then
-                    print("swapping " .. slot)
+                    --print("swapping " .. slot)
                     set_reactors_active(reactors, false) --stop all reactors
+                    --get the coolent cell
                     for destSlots=1, adapter.getInventorySize(1) do
                         local empty = adapter.getStackInSlot(1, destSlots)
                         if empty then
@@ -34,6 +36,7 @@ while true do
                             break
                         end
                     end
+                    --put the coolent cell away
                     for destSlots=1, adapter.getInventorySize(1) do
                         local empty = adapter.getStackInSlot(1, destSlots)
                         if empty ~= nil and empty.name == "gregtech:gt.360k_Helium_Coolantcell" and empty.damage == 0 then
@@ -41,16 +44,14 @@ while true do
                             break
                         end
                     end
-
-                    set_reactors_active(reactors, true) 
+                    --restart reactor
+                    for _, reactor in pairs(reactors) do
+                        reactor.setActive(reactor.getHeat() < 2000)
+                    end
                 end
             else
                 --print("slot " .. slot .. " is empty")
             end
         end
-    end
-
-    for _, reactor in pairs(reactors) do
-        reactor.setActive(reactor.getHeat() < 2000)
     end
 end
